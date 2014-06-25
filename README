@@ -1,0 +1,131 @@
+NAME
+    Complete::Util - Shell tab completion routines
+
+VERSION
+    This document describes version 0.05 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-06-25.
+
+FUNCTIONS
+  complete_array(%args) -> array
+    Arguments ('*' denotes required arguments):
+
+    *   array* => *array*
+
+    *   ci => *bool* (default: 0)
+
+    *   word => *str* (default: "")
+
+    Return value:
+
+  complete_env(%args) -> array
+    Arguments ('*' denotes required arguments):
+
+    *   ci => *bool* (default: 0)
+
+    *   word => *str* (default: "")
+
+    Return value:
+
+  complete_file(%args) -> array
+    Arguments ('*' denotes required arguments):
+
+    *   d => *bool* (default: 1)
+
+        Whether to include directory.
+
+    *   f => *bool* (default: 1)
+
+        Whether to include file.
+
+    *   word => *str* (default: "")
+
+    Return value:
+
+  complete_hash_key(%args) -> array
+    Arguments ('*' denotes required arguments):
+
+    *   ci => *bool* (default: 0)
+
+    *   hash* => *hash*
+
+    *   word => *str* (default: "")
+
+    Return value:
+
+  complete_program(%args) -> array
+    Arguments ('*' denotes required arguments):
+
+    *   word => *str* (default: "")
+
+    Return value:
+
+  mimic_shell_dir_completion(%args) -> array
+    Make completion of paths behave more like shell.
+
+    This function employs a trick to make directory/path completion work
+    more like shell's own. In shell, when completing directory, the sole
+    completion for "foo/" is "foo/", the cursor doesn't automatically add a
+    space (like the way it does when there is only a single completion
+    possible). Instead it stays right after the "/" to allow user to
+    continue completing further deeper in the tree ("foo/bar" and so on).
+
+    To make programmable completion work like shell's builtin dir
+    completion, the trick is to add another completion alternative "foo/"
+    (with an added space) so shell won't automatically add a space because
+    there are now more than one completion possible ("foo/" and "foo/").
+
+    Arguments ('*' denotes required arguments):
+
+    *   completion* => *str*
+
+    Return value:
+
+  parse_shell_cmdline(@args) -> hash
+    Parse shell command-line for processing by completion routines.
+
+    Currently only supports bash.
+
+    Returns hash with the following keys: "words" (array of str, equivalent
+    to "COMP_WORDS" provided by shell to completion routine), "cword" (int,
+    equivalent to shell-provided "COMP_CWORD").
+
+    Arguments ('*' denotes required arguments):
+
+    *   cmdline => *str*
+
+        Command-line, defaults to COMP_LINE environment.
+
+    *   opts => *hash*
+
+        Currently known options: parse*line*sub (code).
+
+    *   point => *int*
+
+        Point/position to complete in command-line, defaults to COMP_POINT.
+
+    Return value:
+
+HOMEPAGE
+    Please visit the project's homepage at
+    <https://metacpan.org/release/Complete-Util>.
+
+SOURCE
+    Source repository is at
+    <https://github.com/sharyanto/perl-Complete-Util>.
+
+BUGS
+    Please report any bugs or feature requests on the bugtracker website
+    <https://rt.cpan.org/Public/Dist/Display.html?Name=Complete-Util>
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
+
+AUTHOR
+    Steven Haryanto <stevenharyanto@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2014 by Steven Haryanto.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
