@@ -24,6 +24,7 @@ test_complete(
     result    => [qw()],
 );
 test_complete(
+    name      => 'ci',
     word      => 'an',
     array     => [qw(An apple a day keeps the doctor away)],
     result    => [qw()],

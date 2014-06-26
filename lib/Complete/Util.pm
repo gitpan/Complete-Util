@@ -19,12 +19,14 @@ our @EXPORT_OK = qw(
                        parse_shell_cmdline
                );
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
+our $DATE = '2014-06-26'; # DATE
 
 our %SPEC;
 
 $SPEC{complete_array} = {
     v => 1.1,
+    summary => 'Complete from array',
     args => {
         array => { schema=>['array*'=>{of=>'str*'}], pos=>0, req=>1 },
         word  => { schema=>[str=>{default=>''}], pos=>1 },
@@ -52,6 +54,7 @@ sub complete_array {
 
 $SPEC{complete_hash_key} = {
     v => 1.1,
+    summary => 'Complete from hash keys',
     args => {
         hash  => { schema=>['hash*'=>{}], pos=>0, req=>1 },
         word  => { schema=>[str=>{default=>''}], pos=>1 },
@@ -73,6 +76,13 @@ sub complete_hash_key {
 
 $SPEC{complete_env} = {
     v => 1.1,
+    summary => 'Complete from environment variables',
+    description => <<'_',
+
+On Windows, environment variable names are all converted to uppercase. You can
+use case-insensitive option (`ci`) to match against original casing.
+
+_
     args => {
         word  => { schema=>[str=>{default=>''}], pos=>0 },
         ci    => { schema=>[bool=>{default=>0}] },
@@ -95,6 +105,12 @@ sub complete_env {
 
 $SPEC{complete_program} = {
     v => 1.1,
+    summary => 'Complete program name found in PATH',
+    description => <<'_',
+
+Windows is supported, on Windows PATH will be split using /;/ instead of /:/.
+
+_
     args => {
         word  => { schema=>[str=>{default=>''}], pos=>0 },
     },
@@ -106,32 +122,27 @@ $SPEC{complete_program} = {
 sub complete_program {
     require List::MoreUtils;
 
-    my %args  = @_;
-    my $word  = $args{word} // "";
+    my %args = @_;
+    my $word = $args{word} // "";
+    my $ci   = $args{ci};
 
-    my @words;
-    my @dir;
-    my $word_has_path;
-    $word =~ m!(.*)/(.*)! and do { @dir = ($1); $word_has_path++; $word = $2 };
-    @dir = split /:/, $ENV{PATH} unless @dir;
-    unshift @dir, ".";
-    for my $dir (@dir) {
-        $dir =~ s!/+$!!; #TEST
+    my $word_re = $ci ? qr/\A\Q$word/i : qr/\A\Q$word/;
+
+    my @res;
+    my @dirs = split(($^O =~ /Win32/ ? qr/;/ : qr/:/), $ENV{PATH});
+    for my $dir (@dirs) {
         opendir my($dh), $dir or next;
         for (readdir($dh)) {
-            next if $word !~ /^\.\.?$/ && ($_ eq '.' || $_ eq '..');
-            next unless index($_, $word) == 0;
-            next unless (-x "$dir/$_") && (-f _) ||
-                ($dir eq '.' || $word_has_path) && (-d _);
-            push @words, (-d _) ? "$_/" : $_;
+            push @res, $_ if $_ =~ $word_re && !(-d "$dir/$_") && (-x _);
         };
     }
 
-    complete_array(array=>[List::MoreUtils::uniq(@words)]);
+    [sort(List::MoreUtils::uniq(@res))];
 }
 
 $SPEC{complete_file} = {
     v => 1.1,
+    summary => 'Complete file and directory from local filesystem',
     args => {
         word => { schema=>[str=>{default=>''}], pos=>0 },
         f    => { summary => 'Whether to include file',
@@ -326,7 +337,6 @@ sub parse_shell_cmdline {
     $cword++ if $nspc_lastw < $nspc_left;
 
     my $res = {words => $words, cword => $cword};
-    #$log->tracef("<- _parse_request, result=%s", $res);
     $res;
 }
 
@@ -345,12 +355,14 @@ Complete::Util - Shell tab completion routines
 
 =head1 VERSION
 
-This document describes version 0.05 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-25.
+This document describes version 0.06 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-26.
 
 =head1 FUNCTIONS
 
 
 =head2 complete_array(%args) -> array
+
+Complete from array.
 
 Arguments ('*' denotes required arguments):
 
@@ -369,6 +381,11 @@ Return value:
 
 =head2 complete_env(%args) -> array
 
+Complete from environment variables.
+
+On Windows, environment variable names are all converted to uppercase. You can
+use case-insensitive option (C<ci>) to match against original casing.
+
 Arguments ('*' denotes required arguments):
 
 =over 4
@@ -383,6 +400,8 @@ Return value:
 
 
 =head2 complete_file(%args) -> array
+
+Complete file and directory from local filesystem.
 
 Arguments ('*' denotes required arguments):
 
@@ -405,6 +424,8 @@ Return value:
 
 =head2 complete_hash_key(%args) -> array
 
+Complete from hash keys.
+
 Arguments ('*' denotes required arguments):
 
 =over 4
@@ -421,6 +442,10 @@ Return value:
 
 
 =head2 complete_program(%args) -> array
+
+Complete program name found in PATH.
+
+Windows is supported, on Windows PATH will be split using /;/ instead of /:/.
 
 Arguments ('*' denotes required arguments):
 

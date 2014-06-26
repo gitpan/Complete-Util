@@ -1,6 +1,12 @@
 Revision history for Complete-Util
 
-0.05    2014-06-25 (SHARYANTO) (not yet released)
+0.06    2014-06-26 (SHARYANTO)
+
+        - complete_program(): add 'ci' option, handle Windows where PATH is
+          split by /;/ and not /:/.
+
+
+0.05    2014-06-25 (SHARYANTO)
 
         - Rename dist from SHARYANTO-Complete-Util to Complete-Util.
 

@@ -36,9 +36,11 @@
       },
       "test" : {
          "requires" : {
+            "File::Slurp::Tiny" : "0",
             "File::Spec" : "0",
             "File::Which" : "0",
             "File::chdir" : "0",
+            "Filesys::Cap" : "0",
             "IO::Handle" : "0",
             "IPC::Open3" : "0",
             "Test::More" : "0.98"
@@ -57,7 +59,7 @@
          "web" : "https://github.com/sharyanto/perl-Complete-Util"
       }
    },
-   "version" : "0.05",
+   "version" : "0.06",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"
