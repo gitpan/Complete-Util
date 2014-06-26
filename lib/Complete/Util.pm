@@ -15,11 +15,12 @@ our @EXPORT_OK = qw(
                        complete_program
 
                        mimic_shell_dir_completion
-
+                       break_cmdline_into_words
                        parse_shell_cmdline
+                       format_shell_completion
                );
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 our $DATE = '2014-06-26'; # DATE
 
 our %SPEC;
@@ -190,6 +191,13 @@ sub complete_file {
     mimic_shell_dir_completion(completion=>$w);
 }
 
+# TODO: complete_user (probably in a separate module)
+# TODO: complete_group (probably in a separate module)
+# TODO: complete_pid (probably in a separate module)
+# TODO: complete_filesystem (probably in a separate module)
+# TODO: complete_hostname (/etc/hosts, ~/ssh/.known_hosts, ...)
+# TODO: complete_package (deb, rpm, ...)
+
 $SPEC{mimic_shell_dir_completion} = {
     v => 1.1,
     summary => 'Make completion of paths behave more like shell',
@@ -209,7 +217,11 @@ completion possible (`foo/` and `foo/ `).
 
 _
     args => {
-        completion => { schema=>'str*', req=>1, pos=>0 },
+        completion => {
+            schema=>'array*',
+            req=>1,
+            pos=>0,
+        },
     },
     result_naked => 1,
     result => {
@@ -223,33 +235,102 @@ sub mimic_shell_dir_completion {
     [$c->[0], "$c->[0] "];
 }
 
-# current problems: Can't parse unclosed quotes (e.g. spanel get-plan "BISNIS
-# A<tab>) and probably other problems, since we don't have access to COMP_WORDS
-# like in shell functions.
-sub _line_to_argv {
-    require IPC::Open2;
+$SPEC{break_cmdline_into_words} = {
+    v => 1.1,
+    summary => 'Break command-line string into words',
+    description => <<'_',
 
-    my $line = pop;
-    my $cmd = q{_pbc() { for a in "$@"; do echo "$a"; done }; _pbc } . $line;
-    my ($reader, $writer);
-    my $pid = IPC::Open2::open2($reader,$writer,'bash 2>/dev/null');
-    print $writer $cmd;
-    close $writer;
-    my @array = map {chomp;$_} <$reader>;
+The first step of shell completion is to break the command-line string
+(e.g. from COMP_LINE in bash) into words.
 
-    # We don't want to expand ~ for user experience and to be consistent with
-    # Bash's behavior for tab completion (as opposed to expansion of ARGV).
-    my $home_dir = (getpwuid($<))[7];
-    @array = map { s!\A\Q$home_dir\E(/|\z)!\~$1!; $_ } @array;
+Bash by default split using these characters (from COMP_WORDBREAKS):
 
-    \@array;
+    "'@><=;|&(:
+
+We don't necessarily want to split using default bash's rule, for example in
+Perl we might want to complete module names which contain colons (e.g.
+`Module::Path`).
+
+By default, this routine splits by spaces and tabs and takes into account
+backslash and quoting. Unclosed quotes won't generate error.
+
+_
+    args => {
+        cmdline => {
+            schema => 'str*',
+            req => 1,
+            pos => 0,
+        },
+    },
+};
+sub break_cmdline_into_words {
+    my %args = @_;
+    my $str = $args{cmdline};
+
+    # BEGIN stolen from Parse::CommandLine, with some mods
+    $str =~ s/\A\s+//ms;
+    $str =~ s/\s+\z//ms;
+
+    my @argv;
+    my $buf;
+    my $escaped;
+    my $double_quoted;
+    my $single_quoted;
+
+    for my $char (split //, $str) {
+        if ($escaped) {
+            $buf .= $char;
+            $escaped = undef;
+            next;
+        }
+
+        if ($char eq '\\') {
+            if ($single_quoted) {
+                $buf .= $char;
+            } else {
+                $escaped = 1;
+            }
+            next;
+        }
+
+        if ($char =~ /\s/) {
+            if ($single_quoted || $double_quoted) {
+                $buf .= $char;
+            } else {
+                push @argv, $buf if defined $buf;
+                undef $buf;
+            }
+            next;
+        }
+
+        if ($char eq '"') {
+            if ($single_quoted) {
+                $buf .= $char;
+                next;
+            }
+            $double_quoted = !$double_quoted;
+            next;
+        }
+
+        if ($char eq "'") {
+            if ($double_quoted) {
+                $buf .= $char;
+                next;
+            }
+            $single_quoted = !$single_quoted;
+            next;
+        }
+
+        $buf .= $char;
+    }
+    push @argv, $buf if defined $buf;
+
+    #if ($escaped || $single_quoted || $double_quoted) {
+    #    die 'invalid command line string';
+    #}
+    \@argv;
+    # END stolen from Parse::CommandLine
 }
-
-# simplistic parsing, doesn't consider shell syntax at all. doesn't work the
-# minute we use funny characters.
-#sub _line_to_argv_BC {
-#    [split(/\h+/, $_[0])];
-#}
 
 $SPEC{parse_shell_cmdline} = {
     v => 1.1,
@@ -276,15 +357,6 @@ _
             schema => 'int*',
             pos => 1,
         },
-        opts => {
-            schema => 'hash*',
-            description => <<'_',
-
-Currently known options: parse_line_sub (code).
-
-_
-            pos => 2,
-        },
     },
     result_naked => 1,
     result => {
@@ -295,9 +367,7 @@ _
     },
 };
 sub parse_shell_cmdline {
-    my ($line, $point, $opts) = @_;
-    $opts //= {};
-    $opts->{parse_line_sub} //= \&_line_to_argv;
+    my ($line, $point) = @_;
 
     $line  //= $ENV{COMP_LINE};
     $point //= $ENV{COMP_POINT};
@@ -309,7 +379,7 @@ sub parse_shell_cmdline {
 
     my @left;
     if (length($left)) {
-        @left = @{ $opts->{parse_line_sub}->($left) };
+        @left = @{ break_cmdline_into_words(cmdline=>$left) };
         # shave off $0
         substr($left, 0, length($left[0])) = "";
         $left =~ s/^\s+//;
@@ -320,7 +390,8 @@ sub parse_shell_cmdline {
     if (length($right)) {
         # shave off the rest of the word at "cursor"
         $right =~ s/^\S+//;
-        @right = @{ $opts->{parse_line_sub}->($right) } if length($right);
+        @right = @{ break_cmdline_into_words(cmdline=>$right) }
+            if length($right);
     }
     $log->tracef("\@left=%s, \@right=%s", \@left, \@right);
 
@@ -340,8 +411,57 @@ sub parse_shell_cmdline {
     $res;
 }
 
+$SPEC{format_shell_completion} = {
+    v => 1.1,
+    summary => 'Format completion for output to shell',
+    description => <<'_',
+
+Usually, like in bash, we just need to output the entries one line at a time,
+with some special characters in the entry escaped using backslashes so it's not
+interpreted by the shell.
+
+_
+    args => {
+        shell_completion => {
+            summary => 'Result of shell completion',
+            description => <<'_',
+
+A hash containing list of completions and other metadata. For example:
+
+    {
+        completion => ['f1', 'f2', 'f3.txt', 'foo:bar.txt'],
+        type => 'filename',
+    }
+
+_
+            schema=>'hash*',
+            req=>1,
+            pos=>0,
+        },
+    },
+    result => {
+        schema => 'str*',
+    },
+    result_naked => 1,
+};
+sub format_shell_completion {
+    my %args = @_;
+
+    my $shcomp = $args{shell_completion} // {};
+    my $comp = $shcomp->{completion} // [];
+
+    my @lines;
+    for (@$comp) {
+        my $str = $_;
+        $str =~ s!([^A-Za-z0-9,+._/\$-])!\\$1!g;
+        push @lines, $str;
+        $str .= "\n";
+    }
+    join("", @lines);
+}
+
 1;
-# ABSTRACT: Shell tab completion routines
+# ABSTRACT: Shell completion routines
 
 __END__
 
@@ -351,13 +471,60 @@ __END__
 
 =head1 NAME
 
-Complete::Util - Shell tab completion routines
+Complete::Util - Shell completion routines
 
 =head1 VERSION
 
-This document describes version 0.06 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-26.
+This document describes version 0.07 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-26.
+
+=head1 DESCRIPTION
+
+This module provides routines for doing programmable shell tab completion.
+Currently this module is geared towards bash, but support for other shells might
+be added in the future (e.g. zsh, fish).
+
+The C<complete_*()> routines are used to complete from a specific data source or
+for a specific type. They are the lower-level functions.
 
 =head1 FUNCTIONS
+
+
+=head2 break_cmdline_into_words(%args) -> [status, msg, result, meta]
+
+Break command-line string into words.
+
+The first step of shell completion is to break the command-line string
+(e.g. from COMP_LINE in bash) into words.
+
+Bash by default split using these characters (from COMP_WORDBREAKS):
+
+    "'@><=;|&(:
+
+We don't necessarily want to split using default bash's rule, for example in
+Perl we might want to complete module names which contain colons (e.g.
+C<Module::Path>).
+
+By default, this routine splits by spaces and tabs and takes into account
+backslash and quoting. Unclosed quotes won't generate error.
+
+Arguments ('*' denotes required arguments):
+
+=over 4
+
+=item * B<cmdline>* => I<str>
+
+=back
+
+Return value:
+
+Returns an enveloped result (an array).
+
+First element (status) is an integer containing HTTP status code
+(200 means OK, 4xx caller error, 5xx function error). Second element
+(msg) is a string containing error message, or 'OK' if status is
+200. Third element (result) is optional, the actual result. Fourth
+element (meta) is called result metadata and is optional, a hash
+that contains extra information.
 
 
 =head2 complete_array(%args) -> array
@@ -458,6 +625,34 @@ Arguments ('*' denotes required arguments):
 Return value:
 
 
+=head2 format_shell_completion(%args) -> str
+
+Format completion for output to shell.
+
+Usually, like in bash, we just need to output the entries one line at a time,
+with some special characters in the entry escaped using backslashes so it's not
+interpreted by the shell.
+
+Arguments ('*' denotes required arguments):
+
+=over 4
+
+=item * B<shell_completion>* => I<hash>
+
+Result of shell completion.
+
+A hash containing list of completions and other metadata. For example:
+
+    {
+        completion => ['f1', 'f2', 'f3.txt', 'foo:bar.txt'],
+        type => 'filename',
+    }
+
+=back
+
+Return value:
+
+
 =head2 mimic_shell_dir_completion(%args) -> array
 
 Make completion of paths behave more like shell.
@@ -478,7 +673,7 @@ Arguments ('*' denotes required arguments):
 
 =over 4
 
-=item * B<completion>* => I<str>
+=item * B<completion>* => I<array>
 
 =back
 
@@ -503,10 +698,6 @@ Arguments ('*' denotes required arguments):
 
 Command-line, defaults to COMP_LINE environment.
 
-=item * B<opts> => I<hash>
-
-Currently known options: parseI<line>sub (code).
-
 =item * B<point> => I<int>
 
 Point/position to complete in command-line, defaults to COMP_POINT.
@@ -514,6 +705,35 @@ Point/position to complete in command-line, defaults to COMP_POINT.
 =back
 
 Return value:
+
+=head1 DEVELOPER'S NOTES
+
+We want to future-proof the API so future features won't break the API (too
+hardly). Below are the various notes related to that.
+
+In fish, aside from string, each completion alternative has some extra metadata.
+For example, when completing filenames, fish might show each possible completion
+filename with type (file/directory) and file size. When completing options, it
+can also display a summary text for each option. So instead of an array of
+strings, array of hashrefs will be allowed in the future:
+
+ ["word1", "word2", "word3"]
+ [ {word=>"word1", ...},
+   {word=>"word2", ...},
+   {word=>"word3", ...}, ]
+
+fish also supports matching not by prefix only, but using wildcard. For example,
+if word if C<b??t> then C<bait> can be suggested as a possible completion. fish
+also supports fuzzy matching (e.g. C<house> can bring up C<horse> or C<hose>).
+There is also spelling-/auto-correction feature in some shells. This feature can
+be added later in the various C<complete_*()> routines. Or there could be helper
+routines for this. In general this won't pose a problem to the API.
+
+fish supports autosuggestion (autocomplete). When user types, without she
+pressing Tab, the shell will suggest completion (not only for a single token,
+but possibly for the entire command). If the user wants to accept the
+suggestion, she can press the Right arrow key. This can be supported later by a
+function e.g. C<shell_complete()> which accepts the command line string.
 
 =head1 HOMEPAGE
 

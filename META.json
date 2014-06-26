@@ -1,5 +1,5 @@
 {
-   "abstract" : "Shell tab completion routines",
+   "abstract" : "Shell completion routines",
    "author" : [
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
@@ -38,7 +38,6 @@
          "requires" : {
             "File::Slurp::Tiny" : "0",
             "File::Spec" : "0",
-            "File::Which" : "0",
             "File::chdir" : "0",
             "Filesys::Cap" : "0",
             "IO::Handle" : "0",
@@ -59,7 +58,7 @@
          "web" : "https://github.com/sharyanto/perl-Complete-Util"
       }
    },
-   "version" : "0.06",
+   "version" : "0.07",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"

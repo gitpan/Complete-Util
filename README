@@ -1,11 +1,51 @@
 NAME
-    Complete::Util - Shell tab completion routines
+    Complete::Util - Shell completion routines
 
 VERSION
-    This document describes version 0.06 of Complete::Util (from Perl
+    This document describes version 0.07 of Complete::Util (from Perl
     distribution Complete-Util), released on 2014-06-26.
 
+DESCRIPTION
+    This module provides routines for doing programmable shell tab
+    completion. Currently this module is geared towards bash, but support
+    for other shells might be added in the future (e.g. zsh, fish).
+
+    The "complete_*()" routines are used to complete from a specific data
+    source or for a specific type. They are the lower-level functions.
+
 FUNCTIONS
+  break_cmdline_into_words(%args) -> [status, msg, result, meta]
+    Break command-line string into words.
+
+    The first step of shell completion is to break the command-line string
+    (e.g. from COMP_LINE in bash) into words.
+
+    Bash by default split using these characters (from COMP_WORDBREAKS):
+
+        "'@><=;|&(:
+
+    We don't necessarily want to split using default bash's rule, for
+    example in Perl we might want to complete module names which contain
+    colons (e.g. "Module::Path").
+
+    By default, this routine splits by spaces and tabs and takes into
+    account backslash and quoting. Unclosed quotes won't generate error.
+
+    Arguments ('*' denotes required arguments):
+
+    *   cmdline* => *str*
+
+    Return value:
+
+    Returns an enveloped result (an array).
+
+    First element (status) is an integer containing HTTP status code (200
+    means OK, 4xx caller error, 5xx function error). Second element (msg) is
+    a string containing error message, or 'OK' if status is 200. Third
+    element (result) is optional, the actual result. Fourth element (meta)
+    is called result metadata and is optional, a hash that contains extra
+    information.
+
   complete_array(%args) -> array
     Complete from array.
 
@@ -76,6 +116,29 @@ FUNCTIONS
 
     Return value:
 
+  format_shell_completion(%args) -> str
+    Format completion for output to shell.
+
+    Usually, like in bash, we just need to output the entries one line at a
+    time, with some special characters in the entry escaped using
+    backslashes so it's not interpreted by the shell.
+
+    Arguments ('*' denotes required arguments):
+
+    *   shell_completion* => *hash*
+
+        Result of shell completion.
+
+        A hash containing list of completions and other metadata. For
+        example:
+
+            {
+                completion => ['f1', 'f2', 'f3.txt', 'foo:bar.txt'],
+                type => 'filename',
+            }
+
+    Return value:
+
   mimic_shell_dir_completion(%args) -> array
     Make completion of paths behave more like shell.
 
@@ -93,7 +156,7 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
-    *   completion* => *str*
+    *   completion* => *array*
 
     Return value:
 
@@ -112,15 +175,42 @@ FUNCTIONS
 
         Command-line, defaults to COMP_LINE environment.
 
-    *   opts => *hash*
-
-        Currently known options: parse*line*sub (code).
-
     *   point => *int*
 
         Point/position to complete in command-line, defaults to COMP_POINT.
 
     Return value:
+
+DEVELOPER'S NOTES
+    We want to future-proof the API so future features won't break the API
+    (too hardly). Below are the various notes related to that.
+
+    In fish, aside from string, each completion alternative has some extra
+    metadata. For example, when completing filenames, fish might show each
+    possible completion filename with type (file/directory) and file size.
+    When completing options, it can also display a summary text for each
+    option. So instead of an array of strings, array of hashrefs will be
+    allowed in the future:
+
+     ["word1", "word2", "word3"]
+     [ {word=>"word1", ...},
+       {word=>"word2", ...},
+       {word=>"word3", ...}, ]
+
+    fish also supports matching not by prefix only, but using wildcard. For
+    example, if word if "b??t" then "bait" can be suggested as a possible
+    completion. fish also supports fuzzy matching (e.g. "house" can bring up
+    "horse" or "hose"). There is also spelling-/auto-correction feature in
+    some shells. This feature can be added later in the various
+    "complete_*()" routines. Or there could be helper routines for this. In
+    general this won't pose a problem to the API.
+
+    fish supports autosuggestion (autocomplete). When user types, without
+    she pressing Tab, the shell will suggest completion (not only for a
+    single token, but possibly for the entire command). If the user wants to
+    accept the suggestion, she can press the Right arrow key. This can be
+    supported later by a function e.g. "shell_complete()" which accepts the
+    command line string.
 
 HOMEPAGE
     Please visit the project's homepage at

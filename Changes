@@ -1,5 +1,14 @@
 Revision history for Complete-Util
 
+0.07    2014-06-26 (SHARYANTO)
+
+        - No longer uses bash to break cmdline into words. This solves some
+          issues like $var no longer being substituted by bash (allowing env
+          completion to work), unclosed quotes work, etc.
+
+        - Add developer's notes.
+
+
 0.06    2014-06-26 (SHARYANTO)
 
         - complete_program(): add 'ci' option, handle Windows where PATH is

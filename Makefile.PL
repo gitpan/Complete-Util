@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Shell tab completion routines",
+  "ABSTRACT" => "Shell completion routines",
   "AUTHOR" => "Steven Haryanto <stevenharyanto\@gmail.com>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -26,14 +26,13 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "File::Slurp::Tiny" => 0,
     "File::Spec" => 0,
-    "File::Which" => 0,
     "File::chdir" => 0,
     "Filesys::Cap" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
     "Test::More" => "0.98"
   },
-  "VERSION" => "0.06",
+  "VERSION" => "0.07",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -43,7 +42,6 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "File::Slurp::Tiny" => 0,
   "File::Spec" => 0,
-  "File::Which" => 0,
   "File::chdir" => 0,
   "Filesys::Cap" => 0,
   "IO::Handle" => 0,

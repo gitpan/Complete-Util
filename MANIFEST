@@ -9,6 +9,7 @@ README
 dist.ini
 lib/Complete/Util.pm
 t/00-compile.t
+t/break_cmdline_into_words.t
 t/complete_array.t
 t/complete_env.t
 t/complete_file.t

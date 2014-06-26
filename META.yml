@@ -1,11 +1,10 @@
 ---
-abstract: 'Shell tab completion routines'
+abstract: 'Shell completion routines'
 author:
   - 'Steven Haryanto <stevenharyanto@gmail.com>'
 build_requires:
   File::Slurp::Tiny: '0'
   File::Spec: '0'
-  File::Which: '0'
   File::chdir: '0'
   Filesys::Cap: '0'
   IO::Handle: '0'
@@ -28,7 +27,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Complete-Util
   homepage: https://metacpan.org/release/Complete-Util
   repository: git://github.com/sharyanto/perl-Complete-Util.git
-version: '0.06'
+version: '0.07'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
