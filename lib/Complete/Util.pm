@@ -20,7 +20,7 @@ our @EXPORT_OK = qw(
                        format_shell_completion
                );
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 our $DATE = '2014-06-27'; # DATE
 
 our %SPEC;
@@ -454,13 +454,19 @@ sub format_shell_completion {
 
     $shcomp //= {};
     my $comp = $shcomp->{completion} // [];
+    my $type = $shcomp->{type} // '';
 
     my @lines;
     for (@$comp) {
         my $str = $_;
-        $str =~ s!([^A-Za-z0-9,+._/\$-])!\\$1!g;
-        push @lines, $str;
+        if ($type eq 'env') {
+            # don't escape $
+            $str =~ s!([^A-Za-z0-9,+._/\$-])!\\$1!g;
+        } else {
+            $str =~ s!([^A-Za-z0-9,+._/-])!\\$1!g;
+        }
         $str .= "\n";
+        push @lines, $str;
     }
     join("", @lines);
 }
@@ -480,7 +486,7 @@ Complete::Util - Shell completion routines
 
 =head1 VERSION
 
-This document describes version 0.08 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-27.
+This document describes version 0.09 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-27.
 
 =head1 DESCRIPTION
 

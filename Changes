@@ -1,5 +1,12 @@
 Revision history for Complete-Util
 
+0.09    2014-06-27 (SHARYANTO)
+
+        [BUG FIXES]
+
+        - Fix format_shell_completion().
+
+
 0.08    2014-06-27 (SHARYANTO)
 
         [INCOMPATIBLE CHANGES]

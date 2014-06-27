@@ -2,7 +2,7 @@ NAME
     Complete::Util - Shell completion routines
 
 VERSION
-    This document describes version 0.08 of Complete::Util (from Perl
+    This document describes version 0.09 of Complete::Util (from Perl
     distribution Complete-Util), released on 2014-06-27.
 
 DESCRIPTION
