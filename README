@@ -2,8 +2,8 @@ NAME
     Complete::Util - Shell completion routines
 
 VERSION
-    This document describes version 0.07 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-06-26.
+    This document describes version 0.08 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-06-27.
 
 DESCRIPTION
     This module provides routines for doing programmable shell tab
@@ -14,7 +14,7 @@ DESCRIPTION
     source or for a specific type. They are the lower-level functions.
 
 FUNCTIONS
-  break_cmdline_into_words(%args) -> [status, msg, result, meta]
+  break_cmdline_into_words(%args) -> array
     Break command-line string into words.
 
     The first step of shell completion is to break the command-line string
@@ -22,7 +22,7 @@ FUNCTIONS
 
     Bash by default split using these characters (from COMP_WORDBREAKS):
 
-        "'@><=;|&(:
+     COMP_WORDBREAKS=$' \t\n"\'@><=;|&(:'
 
     We don't necessarily want to split using default bash's rule, for
     example in Perl we might want to complete module names which contain
@@ -36,15 +36,6 @@ FUNCTIONS
     *   cmdline* => *str*
 
     Return value:
-
-    Returns an enveloped result (an array).
-
-    First element (status) is an integer containing HTTP status code (200
-    means OK, 4xx caller error, 5xx function error). Second element (msg) is
-    a string containing error message, or 'OK' if status is 200. Third
-    element (result) is optional, the actual result. Fourth element (meta)
-    is called result metadata and is optional, a hash that contains extra
-    information.
 
   complete_array(%args) -> array
     Complete from array.
@@ -116,7 +107,7 @@ FUNCTIONS
 
     Return value:
 
-  format_shell_completion(%args) -> str
+  format_shell_completion(@args) -> str
     Format completion for output to shell.
 
     Usually, like in bash, we just need to output the entries one line at a

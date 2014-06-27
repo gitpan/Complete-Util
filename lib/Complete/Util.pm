@@ -20,8 +20,8 @@ our @EXPORT_OK = qw(
                        format_shell_completion
                );
 
-our $VERSION = '0.07'; # VERSION
-our $DATE = '2014-06-26'; # DATE
+our $VERSION = '0.08'; # VERSION
+our $DATE = '2014-06-27'; # DATE
 
 our %SPEC;
 
@@ -245,7 +245,7 @@ The first step of shell completion is to break the command-line string
 
 Bash by default split using these characters (from COMP_WORDBREAKS):
 
-    "'@><=;|&(:
+ COMP_WORDBREAKS=$' \t\n"\'@><=;|&(:'
 
 We don't necessarily want to split using default bash's rule, for example in
 Perl we might want to complete module names which contain colons (e.g.
@@ -261,6 +261,10 @@ _
             req => 1,
             pos => 0,
         },
+    },
+    result_naked => 1,
+    result => {
+        schema => 'array*',
     },
 };
 sub break_cmdline_into_words {
@@ -421,6 +425,7 @@ with some special characters in the entry escaped using backslashes so it's not
 interpreted by the shell.
 
 _
+    args_as => 'array',
     args => {
         shell_completion => {
             summary => 'Result of shell completion',
@@ -445,9 +450,9 @@ _
     result_naked => 1,
 };
 sub format_shell_completion {
-    my %args = @_;
+    my ($shcomp) = @_;
 
-    my $shcomp = $args{shell_completion} // {};
+    $shcomp //= {};
     my $comp = $shcomp->{completion} // [];
 
     my @lines;
@@ -475,7 +480,7 @@ Complete::Util - Shell completion routines
 
 =head1 VERSION
 
-This document describes version 0.07 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-26.
+This document describes version 0.08 of Complete::Util (from Perl distribution Complete-Util), released on 2014-06-27.
 
 =head1 DESCRIPTION
 
@@ -489,7 +494,7 @@ for a specific type. They are the lower-level functions.
 =head1 FUNCTIONS
 
 
-=head2 break_cmdline_into_words(%args) -> [status, msg, result, meta]
+=head2 break_cmdline_into_words(%args) -> array
 
 Break command-line string into words.
 
@@ -498,7 +503,7 @@ The first step of shell completion is to break the command-line string
 
 Bash by default split using these characters (from COMP_WORDBREAKS):
 
-    "'@><=;|&(:
+ COMP_WORDBREAKS=$' \t\n"\'@><=;|&(:'
 
 We don't necessarily want to split using default bash's rule, for example in
 Perl we might want to complete module names which contain colons (e.g.
@@ -516,15 +521,6 @@ Arguments ('*' denotes required arguments):
 =back
 
 Return value:
-
-Returns an enveloped result (an array).
-
-First element (status) is an integer containing HTTP status code
-(200 means OK, 4xx caller error, 5xx function error). Second element
-(msg) is a string containing error message, or 'OK' if status is
-200. Third element (result) is optional, the actual result. Fourth
-element (meta) is called result metadata and is optional, a hash
-that contains extra information.
 
 
 =head2 complete_array(%args) -> array
@@ -625,7 +621,7 @@ Arguments ('*' denotes required arguments):
 Return value:
 
 
-=head2 format_shell_completion(%args) -> str
+=head2 format_shell_completion(@args) -> str
 
 Format completion for output to shell.
 
