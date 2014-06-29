@@ -58,7 +58,7 @@
          "web" : "https://github.com/sharyanto/perl-SHARYANTO-Complete-Util"
       }
    },
-   "version" : "0.10",
+   "version" : "0.11",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"

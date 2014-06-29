@@ -2,7 +2,7 @@ NAME
     Complete::Util - Shell completion routines
 
 VERSION
-    This document describes version 0.10 of Complete::Util (from Perl
+    This document describes version 0.11 of Complete::Util (from Perl
     distribution Complete-Util), released on 2014-06-29.
 
 DESCRIPTION
@@ -156,7 +156,8 @@ FUNCTIONS
     correctly/appropriately to the shell. Known hints: "type" (string, can
     be "filename", "env", or others; this helps the routine picks the
     appropriate escaping), "is_path" (bool, if set to true then
-    "mimic_shell_dir_completion" logic is applied).
+    "mimic_shell_dir_completion" logic is applied), "path_sep" (string,
+    character to separate path, defaults to "/").
 
     Arguments ('*' denotes required arguments):
 
@@ -195,6 +196,8 @@ FUNCTIONS
     Arguments ('*' denotes required arguments):
 
     *   completion* => *array*
+
+    *   sep => *str* (default: "/")
 
     Return value:
 

@@ -1,5 +1,11 @@
 Revision history for Complete-Util
 
+0.11    2014-06-29 (SHARYANTO)
+
+        - Add optional param 'sep' in mimic_shell_completion(), used in
+          format_shell_completion().
+
+
 0.10    2014-06-29 (SHARYANTO)
 
         [INCOMPATIBLE]

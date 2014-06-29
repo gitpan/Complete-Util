@@ -24,6 +24,11 @@ test_complete(
     completion => ['a/'],
     result     => ['a/', 'a/ '],
 );
+test_complete(
+    completion => ['a.'],
+    sep        => '.',
+    result     => ['a.', 'a. '],
+);
 
 wDONE_TESTING:
 done_testing;
@@ -32,7 +37,7 @@ sub test_complete {
     my (%args) = @_;
 
     my $name = $args{name} // join(",", @{ $args{completion} });
-    my $res = mimic_shell_dir_completion($args{completion});
+    my $res = mimic_shell_dir_completion($args{completion}, $args{sep});
     is_deeply($res, $args{result}, "$name (result)")
         or diag explain($res);
 }
