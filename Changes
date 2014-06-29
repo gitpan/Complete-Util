@@ -1,5 +1,22 @@
 Revision history for Complete-Util
 
+0.10    2014-06-29 (SHARYANTO)
+
+        [INCOMPATIBLE]
+
+        - Change interface of mimic_shell_dir_completion() and
+          break_cmdline_into_words() to accept positional arguments. This makes
+          it more consistent: all complete_* accept hash/named args, while the
+          rest positional.
+
+        - Apply mimic_shell_dir_completion() logic in format_shell_completion()
+          when given hint is_path=>1.
+
+        [ENHANCEMENTS]
+
+        - Add intro docs to make it clearer how to use this module.
+
+
 0.09    2014-06-27 (SHARYANTO)
 
         [BUG FIXES]
@@ -11,8 +28,8 @@ Revision history for Complete-Util
 
         [INCOMPATIBLE CHANGES]
 
-        - Change interface of format_shell_completion() (accept array to make it
-          shorter).
+        - Change interface of format_shell_completion() (accept positional args
+          to make it shorter).
 
 
 0.07    2014-06-26 (SHARYANTO)

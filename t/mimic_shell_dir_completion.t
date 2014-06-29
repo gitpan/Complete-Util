@@ -32,7 +32,7 @@ sub test_complete {
     my (%args) = @_;
 
     my $name = $args{name} // join(",", @{ $args{completion} });
-    my $res = mimic_shell_dir_completion(completion=>$args{completion});
+    my $res = mimic_shell_dir_completion($args{completion});
     is_deeply($res, $args{result}, "$name (result)")
         or diag explain($res);
 }
