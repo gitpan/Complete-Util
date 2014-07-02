@@ -1,5 +1,5 @@
 ---
-abstract: 'Shell completion routines'
+abstract: 'General completion routines'
 author:
   - 'Steven Haryanto <stevenharyanto@gmail.com>'
 build_requires:
@@ -13,7 +13,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: '6.30'
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141520'
+generated_by: 'Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141170'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -21,13 +21,13 @@ meta-spec:
 name: Complete-Util
 requires:
   List::MoreUtils: '0'
-  Log::Any: '0'
+  Rinci: v1.1.0
   perl: '5.010001'
 resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Complete-Util
   homepage: https://metacpan.org/release/Complete-Util
-  repository: git://github.com/sharyanto/perl-SHARYANTO-Complete-Util.git
-version: '0.11'
+  repository: git://github.com/sharyanto/perl-Complete-Util.git
+version: '0.12'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
@@ -235,7 +235,7 @@ x_Dist_Zilla:
           script_finder:
             - ':ExecFiles'
       name: '@Author::SHARYANTO/Test::Compile'
-      version: '2.043'
+      version: '2.040'
     -
       class: Dist::Zilla::Plugin::Test::Rinci
       name: '@Author::SHARYANTO/Test::Rinci'

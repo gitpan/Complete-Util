@@ -6,7 +6,7 @@ use warnings;
 
 use Test::More 0.98;
 
-use Complete::Util qw(complete_array);
+use Complete::Util qw(complete_array_elem);
 
 test_complete(
     word      => 'a',
@@ -36,12 +36,12 @@ sub test_complete {
     my (%args) = @_;
 
     my $name = $args{name} // $args{word};
-    my $res = complete_array(
+    my $res = complete_array_elem(
         word=>$args{word}, array=>$args{array});
     is_deeply($res, $args{result}, "$name (result)")
         or diag explain($res);
     if ($args{result_ci}) {
-        my $res_ci = complete_array(
+        my $res_ci = complete_array_elem(
             word=>$args{word}, array=>$args{array}, ci=>1);
         is_deeply($res_ci, $args{result_ci}, "$name (result_ci)")
             or diag explain($res_ci);

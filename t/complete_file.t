@@ -21,12 +21,10 @@ mkdirs (qw(dir1/sub1 dir2/sub2 dir2/sub3));
 mkfiles(qw(foo/f1 foo/f2 foo/g));
 
 test_complete(
-    # sorted
     word      => '',
     result    => [qw(.h1 a ab abc ac bb d dir1/ dir2/ foo/)],
 );
 test_complete(
-    # has word
     word      => 'a',
     result    => [qw(a ab abc ac)],
 );
@@ -36,17 +34,19 @@ test_complete(
     result    => [qw(d dir1/ dir2/)],
 );
 test_complete(
-    # two dirs, won't enable space trick
-    word      => 'di',
-    result    => [qw(dir1/ dir2/)],
+    # file only
+    word       => 'd',
+    other_args => [dir=>0],
+    result     => [qw(d)],
 );
 test_complete(
-    # space trick
-    word      => 'f',
-    result    => ["foo/", "foo/ "],
+    # dir only
+    word       => 'd',
+    other_args => [file=>0],
+    result     => [qw(dir1/ dir2/)],
 );
 test_complete(
-    # subdir
+    # subdir 1
     word      => 'foo/',
     result    => ["foo/f1", "foo/f2", "foo/g"],
 );
@@ -65,6 +65,6 @@ sub test_complete {
 
     my $name = $args{name} // $args{word};
     my $res = complete_file(
-        word=>$args{word}, array=>$args{array});
+        word=>$args{word}, array=>$args{array}, @{ $args{other_args} // [] });
     is_deeply($res, $args{result}, "$name (result)") or diag explain($res);
 }

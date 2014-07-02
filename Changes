@@ -1,5 +1,30 @@
 Revision history for Complete-Util
 
+0.12    2014-07-02 (SHARYANTO)
+
+        - This release is a re-organization of Complete::Util into Complete::*
+          modules family.
+
+        [REMOVED FEATURES]
+
+        - Move bash specific functions to Complete::Bash. This includes:
+          mimic_shell_dir_completion(), format_shell_completion(),
+          break_cmdline_into_words(). Complete::Util now only contains generic
+          complete_*() functions.
+
+        - Move developer notes to Complete.
+
+        [INCOMPATIBLE CHANGES]
+
+        - complete_array() is renamed to complete_array_elem() (but old name is
+          still provided, with no documentation mentioning it, for current
+          module users; the old name will be removed someday in the future).
+
+        - complete_file() no longer does mimic_shell_dir_completion(). You'll
+          have to do it yourself (but, format_completion() from Complete::Bash
+          will do it for you).
+
+
 0.11    2014-06-29 (SHARYANTO)
 
         - Add optional param 'sep' in mimic_shell_completion(), used in

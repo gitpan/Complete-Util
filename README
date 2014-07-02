@@ -1,79 +1,13 @@
 NAME
-    Complete::Util - Shell completion routines
+    Complete::Util - General completion routines
 
 VERSION
-    This document describes version 0.11 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-06-29.
+    This document describes version 0.12 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-07-02.
 
 DESCRIPTION
-    This module provides routines for doing programmable shell tab
-    completion. Currently this module is geared towards bash, but support
-    for other shells might be added in the future (e.g. zsh, fish).
-
-    For more information about bash programmable completion, please consult
-    the bash manual. Basically bash allows you to call an external program
-    (in our case, a Perl script) for completion. When a user asks for a
-    completion of a command by pressing Tab, bash will invoke your program
-    with COMP_LINE and COMP_POINT environment variables which contain,
-    respectively, raw command line string and cursor position. You'll need
-    to parse the command line into "words", come up with a list of
-    completion for the word at cursor position, and output the list as lines
-    to STDOUT. This module provides helper routines for that.
-
-    Say we're writing a utility called "progless" which will invoke less on
-    a program located in PATH (in other words, show a program's source using
-    less). You want to provide a completion so that when you press Tab, a
-    list of programs on PATH will be provided. To do this, you can write a
-    Perl program as follows:
-
-     # progless-completion
-     #!/usr/bin/perl
-     use Complete::Util qw(parse_shell_cmdline complete_program);
-     my $cmdline = parse_shell_cmdline();
-     my $res = complete_program(word => $cmdline->{words}[0]);
-     print format_shell_completion({completion=>$res});
-
-    You'll need to put this program somewhere in your PATH and then install
-    it via bash command:
-
-     % complete -C progless-complete progless
-
-    then you'll be able to do:
-
-     % progless <Tab>
-     % progless deb<Tab>
-
-    Also, take a look at Perinci::CmdLine, a CLI framework that lets you do
-    completion more easily.
-
 FUNCTIONS
-  break_cmdline_into_words(@args) -> array
-    Break command-line string into words.
-
-    Note to users: this is an internal function. Normally you only need to
-    use "parse_shell_cmdline".
-
-    The first step of shell completion is to break the command-line string
-    (e.g. from COMP_LINE in bash) into words.
-
-    Bash by default split using these characters (from COMP_WORDBREAKS):
-
-     COMP_WORDBREAKS=$' \t\n"\'@><=;|&(:'
-
-    We don't necessarily want to split using default bash's rule, for
-    example in Perl we might want to complete module names which contain
-    colons (e.g. "Module::Path").
-
-    By default, this routine splits by spaces and tabs and takes into
-    account backslash and quoting. Unclosed quotes won't generate error.
-
-    Arguments ('*' denotes required arguments):
-
-    *   cmdline* => *str*
-
-    Return value:
-
-  complete_array(%args) -> array
+  complete_array_elem(%args) -> array
     Complete from array.
 
     Arguments ('*' denotes required arguments):
@@ -106,11 +40,11 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
-    *   d => *bool* (default: 1)
+    *   dir => *bool* (default: 1)
 
         Whether to include directory.
 
-    *   f => *bool* (default: 1)
+    *   file => *bool* (default: 1)
 
         Whether to include file.
 
@@ -143,128 +77,13 @@ FUNCTIONS
 
     Return value:
 
-  format_shell_completion(@args) -> str
-    Format completion for output to shell.
-
-    Usually, like in bash, we just need to output the entries one line at a
-    time, with some special characters in the entry escaped using
-    backslashes so it's not interpreted by the shell.
-
-    This function accepts a hash, not an array. You can put the result of
-    "complete_*" function in the "completion" key of the hash. The other
-    keys can be added for hints on how to format the completion reply more
-    correctly/appropriately to the shell. Known hints: "type" (string, can
-    be "filename", "env", or others; this helps the routine picks the
-    appropriate escaping), "is_path" (bool, if set to true then
-    "mimic_shell_dir_completion" logic is applied), "path_sep" (string,
-    character to separate path, defaults to "/").
-
-    Arguments ('*' denotes required arguments):
-
-    *   shell_completion* => *hash*
-
-        Result of shell completion.
-
-        A hash containing list of completions and other metadata. For
-        example:
-
-            {
-                completion => ['f1', 'f2', 'f3.txt', 'foo:bar.txt'],
-                type => 'filename',
-            }
-
-    Return value:
-
-  mimic_shell_dir_completion(@args) -> array
-    Make completion of paths behave more like shell.
-
-    Note for users: normally you just need to use
-    "format_shell_completion()" and need not know about this function.
-
-    This function employs a trick to make directory/path completion work
-    more like shell's own. In shell, when completing directory, the sole
-    completion for "foo/" is "foo/", the cursor doesn't automatically add a
-    space (like the way it does when there is only a single completion
-    possible). Instead it stays right after the "/" to allow user to
-    continue completing further deeper in the tree ("foo/bar" and so on).
-
-    To make programmable completion work like shell's builtin dir
-    completion, the trick is to add another completion alternative "foo/"
-    (with an added space) so shell won't automatically add a space because
-    there are now more than one completion possible ("foo/" and "foo/").
-
-    Arguments ('*' denotes required arguments):
-
-    *   completion* => *array*
-
-    *   sep => *str* (default: "/")
-
-    Return value:
-
-  parse_shell_cmdline(@args) -> hash
-    Parse shell command-line for processing by completion routines.
-
-    Currently only supports bash.
-
-    Returns hash with the following keys: "words" (array of str, equivalent
-    to "COMP_WORDS" provided by shell to completion routine), "cword" (int,
-    equivalent to shell-provided "COMP_CWORD").
-
-    Arguments ('*' denotes required arguments):
-
-    *   cmdline => *str*
-
-        Command-line, defaults to COMP_LINE environment.
-
-    *   point => *int*
-
-        Point/position to complete in command-line, defaults to COMP_POINT.
-
-    Return value:
-
-DEVELOPER'S NOTES
-    This is an internal note only, module users are not required to read
-    this section.
-
-    We want to future-proof the API so future features won't break the API
-    (too hardly). Below are the various notes related to that.
-
-    In fish, aside from string, each completion alternative has some extra
-    metadata. For example, when completing filenames, fish might show each
-    possible completion filename with type (file/directory) and file size.
-    When completing options, it can also display a summary text for each
-    option. So instead of an array of strings, array of hashrefs will be
-    allowed in the future:
-
-     ["word1", "word2", "word3"]
-     [ {word=>"word1", ...},
-       {word=>"word2", ...},
-       {word=>"word3", ...}, ]
-
-    fish also supports matching not by prefix only, but using wildcard. For
-    example, if word if "b??t" then "bait" can be suggested as a possible
-    completion. fish also supports fuzzy matching (e.g. "house" can bring up
-    "horse" or "hose"). There is also spelling-/auto-correction feature in
-    some shells. This feature can be added later in the various
-    "complete_*()" routines. Or there could be helper routines for this. In
-    general this won't pose a problem to the API.
-
-    fish supports autosuggestion (autocomplete). When user types, without
-    she pressing Tab, the shell will suggest completion (not only for a
-    single token, but possibly for the entire command). If the user wants to
-    accept the suggestion, she can press the Right arrow key. This can be
-    supported later by a function e.g. "shell_complete()" which accepts the
-    command line string.
-
 SEE ALSO
-    Programmable Completion section in Bash manual:
-    <https://www.gnu.org/software/bash/manual/html_node/Programmable-Complet
-    ion.html>
+    Complete
 
-    <http://blogs.perl.org/users/steven_haryanto/2014/06/one-final-rant-abou
-    t-programmable-completion-in-bash.html>
+    If you want to do bash tab completion with Perl, take a look at
+    Complete::Bash and Complete::BashGen.
 
-    Perinci::CmdLine, a CLI framework that uses this module.
+    Other "Complete::*" modules.
 
 HOMEPAGE
     Please visit the project's homepage at
@@ -272,7 +91,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
+    <https://github.com/sharyanto/perl-Complete-Util>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website
