@@ -1,5 +1,13 @@
 Revision history for Complete-Util
 
+0.13    2014-07-13 (SHARYANTO)
+
+        [INCOMPATIBLE CHANGES]
+
+        - complete_file(): Replace 'file' and 'dir' options with the more
+          generic 'filter'.
+
+
 0.12    2014-07-02 (SHARYANTO)
 
         - This release is a re-organization of Complete::Util into Complete::*

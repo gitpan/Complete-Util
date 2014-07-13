@@ -2,8 +2,8 @@ NAME
     Complete::Util - General completion routines
 
 VERSION
-    This document describes version 0.12 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-07-02.
+    This document describes version 0.13 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-07-13.
 
 DESCRIPTION
 FUNCTIONS
@@ -40,13 +40,23 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
-    *   dir => *bool* (default: 1)
+    *   filter => *code|str*
 
-        Whether to include directory.
+        Only return items matching this filter.
 
-    *   file => *bool* (default: 1)
+        Filter can either be a string or a code.
 
-        Whether to include file.
+        For string filter, you can specify a pipe-separated groups of
+        sequences of these characters: f, d, r, w, x. Dash can appear
+        anywhere in the sequence to mean not/negate. An example: "f" means
+        to only show regular files, "-f" means only show non-regular files,
+        "drwx" means to show only directories which are readable, writable,
+        and executable (cd-able). "wf|wd" means writable regular files or
+        writable directories.
+
+        For code filter, you supply a coderef. The coderef will be called
+        for each item with these arguments: $name. It should return true if
+        it wants the item to be included.
 
     *   word => *str* (default: "")
 
@@ -91,7 +101,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/sharyanto/perl-Complete-Util>.
+    <https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website

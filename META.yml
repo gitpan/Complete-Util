@@ -13,7 +13,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: '6.30'
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141170'
+generated_by: 'Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141520'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -26,8 +26,8 @@ requires:
 resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Complete-Util
   homepage: https://metacpan.org/release/Complete-Util
-  repository: git://github.com/sharyanto/perl-Complete-Util.git
-version: '0.12'
+  repository: git://github.com/sharyanto/perl-SHARYANTO-Complete-Util.git
+version: '0.13'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
@@ -235,7 +235,7 @@ x_Dist_Zilla:
           script_finder:
             - ':ExecFiles'
       name: '@Author::SHARYANTO/Test::Compile'
-      version: '2.040'
+      version: '2.043'
     -
       class: Dist::Zilla::Plugin::Test::Rinci
       name: '@Author::SHARYANTO/Test::Rinci'

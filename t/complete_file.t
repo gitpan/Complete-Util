@@ -36,14 +36,20 @@ test_complete(
 test_complete(
     # file only
     word       => 'd',
-    other_args => [dir=>0],
+    other_args => [filter=>'-d'],
     result     => [qw(d)],
 );
 test_complete(
-    # dir only
+    # dir only, use |, not very meaningful test
     word       => 'd',
-    other_args => [file=>0],
+    other_args => [filter=>'d|-f'],
     result     => [qw(dir1/ dir2/)],
+);
+test_complete(
+    # code filter
+    word       => '',
+    other_args => [filter=>sub {(-d $_[0]) && $_[0] =~ /^f/}],
+    result     => [qw(foo/)],
 );
 test_complete(
     # subdir 1
