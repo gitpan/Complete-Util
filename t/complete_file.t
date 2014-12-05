@@ -20,9 +20,13 @@ mkdirs (qw(dir1 dir2 foo));
 mkdirs (qw(dir1/sub1 dir2/sub2 dir2/sub3));
 mkfiles(qw(foo/f1 foo/f2 foo/g));
 
+mkdirs (qw(Food));
+mkdirs (qw(Food/Sub4));
+mkfiles(qw(Food/f1 Food/F2));
+
 test_complete(
     word      => '',
-    result    => [qw(.h1 a ab abc ac bb d dir1/ dir2/ foo/)],
+    result    => [qw(.h1 Food/ a ab abc ac bb d dir1/ dir2/ foo/)],
 );
 test_complete(
     word      => 'a',
@@ -62,6 +66,29 @@ test_complete(
     result    => ["foo/f1", "foo/f2"],
 );
 
+subtest ci => sub {
+    test_complete(
+        word      => 'f',
+        ci        => 1,
+        result    => ["Food/", "foo/"],
+    );
+    test_complete(
+        word      => 'F',
+        ci        => 1,
+        result    => ["Food/", "foo/"],
+    );
+    test_complete(
+        word      => 'Food/f',
+        ci        => 1,
+        result    => ["Food/F2", "Food/f1"],
+    );
+    # XXX test foo/ and Foo/ exists, but this requires that fs is case-sensitive
+};
+
+# XXX test ../blah
+# XXX test /abs
+# XXX test ~/blah and ~user/blah
+
 DONE_TESTING:
 $CWD = "/";
 done_testing();
@@ -71,6 +98,7 @@ sub test_complete {
 
     my $name = $args{name} // $args{word};
     my $res = complete_file(
-        word=>$args{word}, array=>$args{array}, @{ $args{other_args} // [] });
+        word=>$args{word}, array=>$args{array}, ci=>$args{ci},
+        @{ $args{other_args} // [] });
     is_deeply($res, $args{result}, "$name (result)") or diag explain($res);
 }

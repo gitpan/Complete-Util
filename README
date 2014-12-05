@@ -2,13 +2,16 @@ NAME
     Complete::Util - General completion routines
 
 VERSION
-    This document describes version 0.13 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-07-13.
+    This document describes version 0.14 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-12-05.
 
 DESCRIPTION
 FUNCTIONS
   complete_array_elem(%args) -> array
     Complete from array.
+
+    Will sort the resulting completion list, so you don't have to presort
+    the array.
 
     Arguments ('*' denotes required arguments):
 
@@ -19,6 +22,8 @@ FUNCTIONS
     *   word => *str* (default: "")
 
     Return value:
+
+     (array)
 
   complete_env(%args) -> array
     Complete from environment variables.
@@ -35,10 +40,16 @@ FUNCTIONS
 
     Return value:
 
+     (array)
+
   complete_file(%args) -> array
     Complete file and directory from local filesystem.
 
     Arguments ('*' denotes required arguments):
+
+    *   ci => *bool*
+
+        Case-insensitive matching.
 
     *   filter => *code|str*
 
@@ -62,6 +73,8 @@ FUNCTIONS
 
     Return value:
 
+     (array)
+
   complete_hash_key(%args) -> array
     Complete from hash keys.
 
@@ -75,6 +88,8 @@ FUNCTIONS
 
     Return value:
 
+     (array)
+
   complete_program(%args) -> array
     Complete program name found in PATH.
 
@@ -83,15 +98,19 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
+    *   ci => *bool*
+
     *   word => *str* (default: "")
 
     Return value:
+
+     (array)
 
 SEE ALSO
     Complete
 
     If you want to do bash tab completion with Perl, take a look at
-    Complete::Bash and Complete::BashGen.
+    Complete::Bash or Getopt::Long::Complete or Perinci::CmdLine.
 
     Other "Complete::*" modules.
 
@@ -101,7 +120,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
+    <https://github.com/perlancar/perl-Complete-Util>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website
@@ -111,10 +130,10 @@ BUGS
     to an existing test-file that illustrates the bug or desired feature.
 
 AUTHOR
-    Steven Haryanto <stevenharyanto@gmail.com>
+    perlancar <perlancar@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2014 by Steven Haryanto.
+    This software is copyright (c) 2014 by perlancar@cpan.org.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

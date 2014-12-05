@@ -1,5 +1,12 @@
 Revision history for Complete-Util
 
+0.14    2014-12-05 (PERLANCAR)
+
+        - complete_file(): Add option 'ci', can handle '~/blah' and '~foo/blah'
+          (but not ~foo [yet?] which requires completing username instead of
+          files).
+
+
 0.13    2014-07-13 (SHARYANTO)
 
         [INCOMPATIBLE CHANGES]
