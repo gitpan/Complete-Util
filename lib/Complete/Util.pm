@@ -1,7 +1,7 @@
 package Complete::Util;
 
-our $DATE = '2014-12-05'; # DATE
-our $VERSION = '0.14'; # VERSION
+our $DATE = '2014-12-09'; # DATE
+our $VERSION = '0.15'; # VERSION
 
 use 5.010001;
 use strict;
@@ -10,6 +10,8 @@ use warnings;
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
+                       hashify_answer
+                       arrayify_answer
                        complete_array_elem
                        complete_hash_key
                        complete_env
@@ -18,6 +20,80 @@ our @EXPORT_OK = qw(
                );
 
 our %SPEC;
+
+$SPEC{hashify_answer} = {
+    v => 1.1,
+    summary => 'Make sure we return completion answer in hash form',
+    description => <<'_',
+
+This function accepts a hash or an array. If it receives an array, will convert
+the array into `{words=>$ary}' first to make sure the completion answer is in
+hash form.
+
+Then will add keys from `meta` to the hash.
+
+_
+    args => {
+        arg => {
+            summary => '',
+            schema  => ['any*' => of => ['array*','hash*']],
+            req => 1,
+            pos => 0,
+        },
+        meta => {
+            summary => 'Metadata (extra keys) for the hash',
+            schema  => 'hash*',
+            pos => 1,
+        },
+    },
+    result_naked => 1,
+    result => {
+        schema => 'hash*',
+    },
+};
+sub hashify_answer {
+    my $ans = shift;
+    if (ref($ans) ne 'HASH') {
+        $ans = {words=>$ans};
+    }
+    if (@_) {
+        my $meta = shift;
+        for (keys %$meta) {
+            $ans->{$_} = $meta->{$_};
+        }
+    }
+    $ans;
+}
+
+$SPEC{arrayify_answer} = {
+    v => 1.1,
+    summary => 'Make sure we return completion answer in array form',
+    description => <<'_',
+
+This is the reverse of `hashify_answer`. It accepts a hash or an array. If it
+receives a hash, will return its `words` key.
+
+_
+    args => {
+        arg => {
+            summary => '',
+            schema  => ['any*' => of => ['array*','hash*']],
+            req => 1,
+            pos => 0,
+        },
+    },
+    result_naked => 1,
+    result => {
+        schema => 'array*',
+    },
+};
+sub arrayify_answer {
+    my $ans = shift;
+    if (ref($ans) eq 'HASH') {
+        $ans = $ans->{words};
+    }
+    $ans;
+}
 
 $SPEC{complete_array_elem} = {
     v => 1.1,
@@ -340,11 +416,31 @@ Complete::Util - General completion routines
 
 =head1 VERSION
 
-This document describes version 0.14 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-05.
+This document describes version 0.15 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-09.
 
 =head1 DESCRIPTION
 
 =head1 FUNCTIONS
+
+
+=head2 arrayify_answer(%args) -> array
+
+Make sure we return completion answer in array form.
+
+This is the reverse of C<hashify_answer>. It accepts a hash or an array. If it
+receives a hash, will return its C<words> key.
+
+Arguments ('*' denotes required arguments):
+
+=over 4
+
+=item * B<arg>* => I<array|hash>
+
+=back
+
+Return value:
+
+ (array)
 
 
 =head2 complete_array_elem(%args) -> array
@@ -471,6 +567,33 @@ Return value:
 
  (array)
 
+
+=head2 hashify_answer(%args) -> hash
+
+Make sure we return completion answer in hash form.
+
+This function accepts a hash or an array. If it receives an array, will convert
+the array into `{words=>$ary}' first to make sure the completion answer is in
+hash form.
+
+Then will add keys from C<meta> to the hash.
+
+Arguments ('*' denotes required arguments):
+
+=over 4
+
+=item * B<arg>* => I<array|hash>
+
+=item * B<meta> => I<hash>
+
+Metadata (extra keys) for the hash.
+
+=back
+
+Return value:
+
+ (hash)
+
 =for Pod::Coverage ^(complete_array)$
 
 =head1 SEE ALSO
@@ -488,7 +611,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Complete-U
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/perlancar/perl-Complete-Util>.
+Source repository is at L<https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
 
 =head1 BUGS
 

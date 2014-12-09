@@ -2,11 +2,25 @@ NAME
     Complete::Util - General completion routines
 
 VERSION
-    This document describes version 0.14 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-12-05.
+    This document describes version 0.15 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-12-09.
 
 DESCRIPTION
 FUNCTIONS
+  arrayify_answer(%args) -> array
+    Make sure we return completion answer in array form.
+
+    This is the reverse of "hashify_answer". It accepts a hash or an array.
+    If it receives a hash, will return its "words" key.
+
+    Arguments ('*' denotes required arguments):
+
+    *   arg* => *array|hash*
+
+    Return value:
+
+     (array)
+
   complete_array_elem(%args) -> array
     Complete from array.
 
@@ -106,6 +120,27 @@ FUNCTIONS
 
      (array)
 
+  hashify_answer(%args) -> hash
+    Make sure we return completion answer in hash form.
+
+    This function accepts a hash or an array. If it receives an array, will
+    convert the array into `{words=>$ary}' first to make sure the completion
+    answer is in hash form.
+
+    Then will add keys from "meta" to the hash.
+
+    Arguments ('*' denotes required arguments):
+
+    *   arg* => *array|hash*
+
+    *   meta => *hash*
+
+        Metadata (extra keys) for the hash.
+
+    Return value:
+
+     (hash)
+
 SEE ALSO
     Complete
 
@@ -120,7 +155,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/perlancar/perl-Complete-Util>.
+    <https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website
