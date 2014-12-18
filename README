@@ -1,9 +1,9 @@
 NAME
-    Complete::Util - General completion routines
+    Complete::Util - General completion routine
 
 VERSION
-    This document describes version 0.15 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-12-09.
+    This document describes version 0.16 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-12-18.
 
 DESCRIPTION
 FUNCTIONS
@@ -155,7 +155,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
+    <https://github.com/perlancar/perl-Complete-Util>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website

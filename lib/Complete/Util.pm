@@ -1,7 +1,7 @@
 package Complete::Util;
 
-our $DATE = '2014-12-09'; # DATE
-our $VERSION = '0.15'; # VERSION
+our $DATE = '2014-12-18'; # DATE
+our $VERSION = '0.16'; # VERSION
 
 use 5.010001;
 use strict;
@@ -20,6 +20,11 @@ our @EXPORT_OK = qw(
                );
 
 our %SPEC;
+
+$SPEC{':package'} = {
+    v => 1.1,
+    summary => 'General completion routine',
+};
 
 $SPEC{hashify_answer} = {
     v => 1.1,
@@ -402,7 +407,7 @@ sub complete_file {
 # TODO: complete_package (deb, rpm, ...)
 
 1;
-# ABSTRACT: General completion routines
+# ABSTRACT: General completion routine
 
 __END__
 
@@ -412,11 +417,11 @@ __END__
 
 =head1 NAME
 
-Complete::Util - General completion routines
+Complete::Util - General completion routine
 
 =head1 VERSION
 
-This document describes version 0.15 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-09.
+This document describes version 0.16 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-18.
 
 =head1 DESCRIPTION
 
@@ -611,7 +616,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Complete-U
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
+Source repository is at L<https://github.com/perlancar/perl-Complete-Util>.
 
 =head1 BUGS
 

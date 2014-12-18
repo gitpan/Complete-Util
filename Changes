@@ -1,5 +1,10 @@
 Revision history for Complete-Util
 
+0.16    2014-12-18 (PERLANCAR)
+
+        - Fix t\complete_program.t failure on Windows (thanks NANIS).
+
+
 0.15    2014-12-09 (PERLANCAR)
 
 	- Add functions: hashify_answer, arrayify_answer.
