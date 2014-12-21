@@ -2,8 +2,8 @@ NAME
     Complete::Util - General completion routine
 
 VERSION
-    This document describes version 0.16 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-12-18.
+    This document describes version 0.17 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-12-21.
 
 DESCRIPTION
 FUNCTIONS
@@ -20,6 +20,32 @@ FUNCTIONS
     Return value:
 
      (array)
+
+  combine_answers($answers, ...) -> hash
+    Given two or more answers, combine them into one.
+
+    This function is useful if you want to provide a completion answer that
+    is gathered from multiple sources. For example, say you are providing
+    completion for the Perl tool "cpanm", which accepts a filename (a
+    tarball like "*.tar.gz"), a directory, or a module name. You can do
+    something like this:
+
+     combine_answers(
+         complete_file(word=>$word, ci=>1),
+         complete_module(word=>$word, ci=>1),
+     );
+
+    Arguments ('*' denotes required arguments):
+
+    *   answers* => *array*
+
+    Return value:
+
+     (hash)
+
+    Return a combined completion answer. Words from each input answer will
+    be combined, order preserved and duplicates removed. The other keys from
+    each answer will be merged.
 
   complete_array_elem(%args) -> array
     Complete from array.
@@ -155,7 +181,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/perlancar/perl-Complete-Util>.
+    <https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website

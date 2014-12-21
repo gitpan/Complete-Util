@@ -9,6 +9,7 @@ README
 dist.ini
 lib/Complete/Util.pm
 t/00-compile.t
+t/combine_answers.t
 t/complete_array_elem.t
 t/complete_env.t
 t/complete_file.t

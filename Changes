@@ -1,5 +1,12 @@
 Revision history for Complete-Util
 
+0.17    2014-12-21 (PERLANCAR)
+
+	- Add function: combine_answers().
+
+	- Delay loading File::Glob.
+
+
 0.16    2014-12-18 (PERLANCAR)
 
         - Fix t\complete_program.t failure on Windows (thanks NANIS).

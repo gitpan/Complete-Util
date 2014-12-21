@@ -1,7 +1,7 @@
 package Complete::Util;
 
-our $DATE = '2014-12-18'; # DATE
-our $VERSION = '0.16'; # VERSION
+our $DATE = '2014-12-21'; # DATE
+our $VERSION = '0.17'; # VERSION
 
 use 5.010001;
 use strict;
@@ -12,6 +12,7 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
                        hashify_answer
                        arrayify_answer
+                       combine_answers
                        complete_array_elem
                        complete_hash_key
                        complete_env
@@ -263,6 +264,8 @@ _
     },
 };
 sub complete_file {
+    require File::Glob;
+
     my %args   = @_;
     my $word   = $args{word} // "";
     my $ci     = $args{ci};
@@ -276,7 +279,7 @@ sub complete_file {
     my $res_num_remove = 0;
     if ($word =~ s!\A(~[^/]*)/!!) {
         $res_prefix = "$1/";
-        my @dir = glob($1); # glob will expand ~foo to /home/foo
+        my @dir = File::Glob::glob($1); # glob will expand ~foo to /home/foo
         return [] unless @dir;
         $search_prefix = $dir[0] =~ m!/\z! ? $dir[0] : "$dir[0]/";
         $res_num_remove = length($search_prefix);
@@ -402,6 +405,85 @@ sub complete_file {
     \@res;
 }
 
+$SPEC{combine_answers} = {
+    v => 1.1,
+    summary => 'Given two or more answers, combine them into one',
+    description => <<'_',
+
+This function is useful if you want to provide a completion answer that is
+gathered from multiple sources. For example, say you are providing completion
+for the Perl tool `cpanm`, which accepts a filename (a tarball like `*.tar.gz`),
+a directory, or a module name. You can do something like this:
+
+    combine_answers(
+        complete_file(word=>$word, ci=>1),
+        complete_module(word=>$word, ci=>1),
+    );
+
+_
+    args => {
+        answers => {
+            schema => [
+                'array*' => {
+                    of => ['any*', of=>['hash*','array*']], # XXX answer_t
+                    min_len => 1,
+                },
+            ],
+            req => 1,
+            pos => 0,
+            greedy => 1,
+        },
+    },
+    args_as => 'array',
+    result_naked => 1,
+    result => {
+        schema => 'hash*',
+        description => <<'_',
+
+Return a combined completion answer. Words from each input answer will be
+combined, order preserved and duplicates removed. The other keys from each
+answer will be merged.
+
+_
+    },
+};
+sub combine_answers {
+    require List::Util;
+
+    return undef unless @_;
+    return $_[0] if @_ < 2;
+
+    my $final = {words=>[]};
+    my $encounter_hash;
+    my $add_words = sub {
+        my $words = shift;
+        for my $entry (@$words) {
+            push @{ $final->{words} }, $entry
+                unless List::Util::first(
+                    sub {
+                        (ref($entry) ? $entry->{word} : $entry)
+                            eq
+                                (ref($_) ? $_->{word} : $_)
+                            }, @{ $final->{words} }
+                        );
+        }
+    };
+
+    for my $ans (@_) {
+        if (ref($ans) eq 'ARRAY') {
+            $add_words->($ans);
+        } elsif (ref($ans) eq 'HASH') {
+            $encounter_hash++;
+            $add_words->($ans->{words} // []);
+            for (keys %$ans) {
+                next if $_ eq 'words';
+                $final->{$_} = $ans->{$_};
+            }
+        }
+    }
+    $encounter_hash ? $final : $final->{words};
+}
+
 # TODO: complete_filesystem (probably in a separate module)
 # TODO: complete_hostname (/etc/hosts, ~/ssh/.known_hosts, ...)
 # TODO: complete_package (deb, rpm, ...)
@@ -421,7 +503,7 @@ Complete::Util - General completion routine
 
 =head1 VERSION
 
-This document describes version 0.16 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-18.
+This document describes version 0.17 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-21.
 
 =head1 DESCRIPTION
 
@@ -446,6 +528,37 @@ Arguments ('*' denotes required arguments):
 Return value:
 
  (array)
+
+
+=head2 combine_answers($answers, ...) -> hash
+
+Given two or more answers, combine them into one.
+
+This function is useful if you want to provide a completion answer that is
+gathered from multiple sources. For example, say you are providing completion
+for the Perl tool C<cpanm>, which accepts a filename (a tarball like C<*.tar.gz>),
+a directory, or a module name. You can do something like this:
+
+ combine_answers(
+     complete_file(word=>$word, ci=>1),
+     complete_module(word=>$word, ci=>1),
+ );
+
+Arguments ('*' denotes required arguments):
+
+=over 4
+
+=item * B<answers>* => I<array>
+
+=back
+
+Return value:
+
+ (hash)
+
+Return a combined completion answer. Words from each input answer will be
+combined, order preserved and duplicates removed. The other keys from each
+answer will be merged.
 
 
 =head2 complete_array_elem(%args) -> array
@@ -616,7 +729,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Complete-U
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/perlancar/perl-Complete-Util>.
+Source repository is at L<https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
 
 =head1 BUGS
 

@@ -13,7 +13,8 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "General completion routine",
   "AUTHOR" => "perlancar <perlancar\@cpan.org>",
   "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => 0
+    "ExtUtils::MakeMaker" => 0,
+    "Perl::osnames" => "0.09"
   },
   "DISTNAME" => "Complete-Util",
   "EXE_FILES" => [],
@@ -33,7 +34,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => "0.98"
   },
-  "VERSION" => "0.16",
+  "VERSION" => "0.17",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -49,6 +50,7 @@ my %FallbackPrereqs = (
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
   "List::MoreUtils" => 0,
+  "Perl::osnames" => "0.09",
   "Rinci" => "1.1.0",
   "Test::More" => "0.98"
 );
