@@ -2,8 +2,8 @@ NAME
     Complete::Util - General completion routine
 
 VERSION
-    This document describes version 0.17 of Complete::Util (from Perl
-    distribution Complete-Util), released on 2014-12-21.
+    This document describes version 0.18 of Complete::Util (from Perl
+    distribution Complete-Util), released on 2014-12-24.
 
 DESCRIPTION
 FUNCTIONS
@@ -57,7 +57,7 @@ FUNCTIONS
 
     *   array* => *array*
 
-    *   ci => *bool* (default: 0)
+    *   ci => *bool*
 
     *   word => *str* (default: "")
 
@@ -74,7 +74,7 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
-    *   ci => *bool* (default: 0)
+    *   ci => *bool*
 
     *   word => *str* (default: "")
 
@@ -120,7 +120,7 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
-    *   ci => *bool* (default: 0)
+    *   ci => *bool*
 
     *   hash* => *hash*
 
@@ -181,7 +181,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/sharyanto/perl-SHARYANTO-Complete-Util>.
+    <https://github.com/perlancar/perl-Complete-Util>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website

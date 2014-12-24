@@ -35,7 +35,7 @@ sub test_complete {
     my (%args) = @_;
 
     my $name = $args{name} // $args{word};
-    my $res = complete_env(word=>$args{word});
+    my $res = complete_env(word=>$args{word}, ci=>0);
     is_deeply($res, $args{result}, "$name (result)")
         or diag explain($res);
     if ($args{result_ci}) {

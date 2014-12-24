@@ -28,7 +28,7 @@ sub test_complete {
     #$log->tracef("args=%s", \%args);
 
     my $name = $args{name} // $args{word};
-    my $res = [sort @{complete_hash_key(word=>$args{word}, hash=>$args{hash})}];
+    my $res = [sort @{complete_hash_key(word=>$args{word}, hash=>$args{hash}, ci=>0)}];
     is_deeply($res, $args{result}, "$name (result)") or explain($res);
     if ($args{result_ci}) {
         my $res_ci = [sort @{complete_hash_key(
