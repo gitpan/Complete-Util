@@ -1,7 +1,7 @@
 package Complete::Util;
 
 our $DATE = '2014-12-25'; # DATE
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 use 5.010001;
 use strict;
@@ -451,7 +451,7 @@ Complete::Util - General completion routine
 
 =head1 VERSION
 
-This document describes version 0.19 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-25.
+This document describes version 0.20 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-25.
 
 =head1 DESCRIPTION
 

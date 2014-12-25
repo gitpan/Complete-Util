@@ -30,7 +30,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Complete-Util
   homepage: https://metacpan.org/release/Complete-Util
   repository: git://github.com/sharyanto/perl-SHARYANTO-Complete-Util.git
-version: '0.19'
+version: '0.20'
 x_Dist_Zilla:
   perl:
     version: '5.018001'

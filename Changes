@@ -1,5 +1,12 @@
 Revision history for Complete-Util
 
+0.20    2014-12-25 (PERLANCAR)
+
+	- No functional changes.
+
+	- Add tests for map_case and exp_im_path.
+
+
 0.19    2014-12-25 (PERLANCAR) - ♪ the magic of christmas day
 
 	- Extracted most functionality of complete_file() to Complete-Path, to
