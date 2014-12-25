@@ -44,24 +44,24 @@ test_complete(
     result     => [qw(d)],
 );
 test_complete(
-    # dir only, use |, not very meaningful test
+    name       => 'dir only, use |, not very meaningful test',
     word       => 'd',
     other_args => [filter=>'d|-f'],
     result     => [qw(dir1/ dir2/)],
 );
 test_complete(
-    # code filter
+    name       => 'code filter',
     word       => '',
-    other_args => [filter=>sub {(-d $_[0]) && $_[0] =~ /^f/}],
+    other_args => [filter=>sub {my $res=(-d $_[0]) && $_[0] =~ m!\./f!}],
     result     => [qw(foo/)],
 );
 test_complete(
-    # subdir 1
+    name      => 'subdir 1',
     word      => 'foo/',
     result    => ["foo/f1", "foo/f2", "foo/g"],
 );
 test_complete(
-    # subdir 2
+    name      => 'subdir 2',
     word      => 'foo/f',
     result    => ["foo/f1", "foo/f2"],
 );
@@ -98,7 +98,7 @@ sub test_complete {
 
     my $name = $args{name} // $args{word};
     my $res = complete_file(
-        word=>$args{word}, array=>$args{array}, ci=>$args{ci},
+        word=>$args{word}, array=>$args{array}, ci=>$args{ci} // 0,
         @{ $args{other_args} // [] });
     is_deeply($res, $args{result}, "$name (result)") or diag explain($res);
 }
