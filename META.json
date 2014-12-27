@@ -61,7 +61,7 @@
          "web" : "https://github.com/sharyanto/perl-SHARYANTO-Complete-Util"
       }
    },
-   "version" : "0.20",
+   "version" : "0.21",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"
@@ -265,7 +265,7 @@
                      {
                         "class" : "Pod::Weaver::Plugin::Rinci",
                         "name" : "@Author::PERLANCAR/Rinci",
-                        "version" : "0.25"
+                        "version" : "0.26"
                      },
                      {
                         "class" : "Pod::Weaver::Section::Leftovers",

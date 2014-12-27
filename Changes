@@ -1,5 +1,13 @@
 Revision history for Complete-Util
 
+0.21    2014-12-27 (PERLANCAR)
+
+	- No functional changes.
+
+	- Tweak Rinci metadata (prepare for use by App-CompleteCLIs, make
+	  it consistent that word is argument at pos=0.
+
+
 0.20    2014-12-25 (PERLANCAR)
 
 	- No functional changes.

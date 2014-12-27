@@ -1,7 +1,7 @@
 package Complete::Util;
 
-our $DATE = '2014-12-25'; # DATE
-our $VERSION = '0.20'; # VERSION
+our $DATE = '2014-12-27'; # DATE
+our $VERSION = '0.21'; # VERSION
 
 use 5.010001;
 use strict;
@@ -112,8 +112,8 @@ Will sort the resulting completion list, so you don't have to presort the array.
 
 _
     args => {
-        array => { schema=>['array*'=>{of=>'str*'}], pos=>0, req=>1 },
-        word  => { schema=>[str=>{default=>''}], pos=>1 },
+        word  => { schema=>[str=>{default=>''}], pos=>0, req=>1 },
+        array => { schema=>['array*'=>{of=>'str*'}], req=>1 },
         ci    => { schema=>['bool'] },
     },
     result_naked => 1,
@@ -142,8 +142,8 @@ $SPEC{complete_hash_key} = {
     v => 1.1,
     summary => 'Complete from hash keys',
     args => {
-        hash  => { schema=>['hash*'=>{}], pos=>0, req=>1 },
-        word  => { schema=>[str=>{default=>''}], pos=>1 },
+        word  => { schema=>[str=>{default=>''}], pos=>0, req=>1 },
+        hash  => { schema=>['hash*'=>{}], req=>1 },
         ci    => { schema=>['bool'] },
     },
     result_naked => 1,
@@ -170,7 +170,7 @@ use case-insensitive option (`ci`) to match against original casing.
 
 _
     args => {
-        word  => { schema=>[str=>{default=>''}], pos=>0 },
+        word  => { schema=>[str=>{default=>''}], pos=>0, req=>1 },
         ci    => { schema=>['bool'] },
     },
     result_naked => 1,
@@ -199,7 +199,7 @@ Windows is supported, on Windows PATH will be split using /;/ instead of /:/.
 
 _
     args => {
-        word  => { schema=>[str=>{default=>''}], pos=>0 },
+        word  => { schema=>[str=>{default=>''}], pos=>0, req=>1 },
         ci    => { schema=>'bool' },
     },
     result_naked => 1,
@@ -234,6 +234,7 @@ $SPEC{complete_file} = {
     args => {
         word => {
             schema  => [str=>{default=>''}],
+            req     => 1,
             pos     => 0,
         },
         ci => {
@@ -451,7 +452,7 @@ Complete::Util - General completion routine
 
 =head1 VERSION
 
-This document describes version 0.20 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-25.
+This document describes version 0.21 of Complete::Util (from Perl distribution Complete-Util), released on 2014-12-27.
 
 =head1 DESCRIPTION
 
@@ -523,7 +524,7 @@ Arguments ('*' denotes required arguments):
 
 =item * B<ci> => I<bool>
 
-=item * B<word> => I<str> (default: "")
+=item * B<word>* => I<str> (default: "")
 
 =back
 
@@ -545,7 +546,7 @@ Arguments ('*' denotes required arguments):
 
 =item * B<ci> => I<bool>
 
-=item * B<word> => I<str> (default: "")
+=item * B<word>* => I<str> (default: "")
 
 =back
 
@@ -587,7 +588,7 @@ included.
 
 =item * B<map_case> => I<bool>
 
-=item * B<word> => I<str> (default: "")
+=item * B<word>* => I<str> (default: "")
 
 =back
 
@@ -608,7 +609,7 @@ Arguments ('*' denotes required arguments):
 
 =item * B<hash>* => I<hash>
 
-=item * B<word> => I<str> (default: "")
+=item * B<word>* => I<str> (default: "")
 
 =back
 
@@ -629,7 +630,7 @@ Arguments ('*' denotes required arguments):
 
 =item * B<ci> => I<bool>
 
-=item * B<word> => I<str> (default: "")
+=item * B<word>* => I<str> (default: "")
 
 =back
 
